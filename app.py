@@ -354,12 +354,36 @@ def history_section():
         st.write("No history yet.")
         return
 
-    summary = history_summary(history)
-    st.write("Recent picks by mood:", summary)
+    col1, col2 = st.columns(2)
+    with col1:
+        mood_filter = st.selectbox(
+            "Filter history by mood",
+            options=["All", "Hype", "Chill", "Mixed"],
+            index=0,
+        )
+    with col2:
+        last_n = st.slider(
+            "Show last N picks",
+            min_value=1,
+            max_value=len(history),
+            value=min(10, len(history)),
+        )
+
+    recent_history = history[-last_n:]
+    if mood_filter == "All":
+        visible_history = recent_history
+    else:
+        visible_history = [
+            song for song in recent_history if song.get("mood", "Mixed") == mood_filter
+        ]
+
+    summary = history_summary(visible_history)
+    st.write("Visible picks by mood:", summary)
+    st.caption(f"Showing {len(visible_history)} of the last {last_n} picks.")
 
     show_details = st.checkbox("Show full history")
     if show_details:
-        for song in history:
+        for song in visible_history:
             st.write(
                 f"{song.get('mood', '?')}: {song['title']} by {song['artist']}"
             )
