@@ -111,3 +111,34 @@ If you finish early or want an extra challenge, try one of these:
 - Stay curious. The unpredictability is intentional and part of the experience.
 
 When you finish, Playlist Chaos will feel more predictable, and you will have taken your first steps into AI-assisted debugging.
+
+---
+
+## Demo
+
+- Run the app:
+	- `python -m streamlit run app.py`
+- Run automated tests:
+	- `pytest -q`
+
+Current repaired behaviors demonstrated in app and tests:
+
+- Artist search supports case-insensitive partial matches.
+- Playlist stats compute hype ratio and average energy from all songs.
+- Lucky pick handles empty lists safely.
+- History view supports mood filtering and recent-window controls.
+
+## Document Your Experience
+
+Completed required work in this project:
+
+- Identified and fixed multiple logic bugs in `playlist_logic.py`.
+- Added collaboration comments near each fix using `# FIX (with Copilot): ...`.
+- Added regression/verification tests in `test/test_game_logic.py`.
+- Added `reflection.md` with glitch notes, AI collaboration analysis, and testing evidence.
+
+How AI contributed:
+
+- Helped identify likely failure points quickly (search logic, stats denominator, empty random choice).
+- Accelerated drafting of targeted regression tests.
+- Human verification was still required for correctness and edge-case handling.

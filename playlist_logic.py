@@ -28,7 +28,8 @@ def normalize_artist(artist: str) -> str:
 
 def normalize_genre(genre: str) -> str:
     """Normalize a genre name for comparisons."""
-    return genre.lower().strip()
+    # FIX (with Copilot): Accept non-string genre values safely.
+    return str(genre).lower().strip()
 
 
 def normalize_song(raw: Song) -> Song:
@@ -61,7 +62,8 @@ def classify_song(song: Song, profile: Dict[str, object]) -> str:
     """Return a mood label given a song and user profile."""
     energy = song.get("energy", 0)
     genre = song.get("genre", "")
-    title = song.get("title", "")
+    # FIX (with Copilot): Compare keywords on normalized title text.
+    title = str(song.get("title", "")).lower()
 
     hype_min_energy = profile.get("hype_min_energy", 7)
     chill_max_energy = profile.get("chill_max_energy", 3)
@@ -101,7 +103,8 @@ def merge_playlists(a: PlaylistMap, b: PlaylistMap) -> PlaylistMap:
     """Merge two playlist maps into a new map."""
     merged: PlaylistMap = {}
     for key in set(list(a.keys()) + list(b.keys())):
-        merged[key] = a.get(key, [])
+        # FIX (with Copilot): Copy lists to avoid mutating source playlist maps.
+        merged[key] = list(a.get(key, []))
         merged[key].extend(b.get(key, []))
     return merged
 
@@ -116,12 +119,14 @@ def compute_playlist_stats(playlists: PlaylistMap) -> Dict[str, object]:
     chill = playlists.get("Chill", [])
     mixed = playlists.get("Mixed", [])
 
-    total = len(hype)
+    # FIX (with Copilot): Ratio denominator must use all songs, not just Hype songs.
+    total = len(all_songs)
     hype_ratio = len(hype) / total if total > 0 else 0.0
 
     avg_energy = 0.0
     if all_songs:
-        total_energy = sum(song.get("energy", 0) for song in hype)
+        # FIX (with Copilot): Average energy should include all visible songs.
+        total_energy = sum(song.get("energy", 0) for song in all_songs)
         avg_energy = total_energy / len(all_songs)
 
     top_artist, top_count = most_common_artist(all_songs)
@@ -168,7 +173,8 @@ def search_songs(
 
     for song in songs:
         value = str(song.get(field, "")).lower()
-        if value and value in q:
+        # FIX (with Copilot): Match query as a substring of the field value.
+        if value and q in value:
             filtered.append(song)
 
     return filtered
@@ -193,6 +199,9 @@ def random_choice_or_none(songs: List[Song]) -> Optional[Song]:
     """Return a random song or None."""
     import random
 
+    # FIX (with Copilot): Avoid IndexError when called with an empty list.
+    if not songs:
+        return None
     return random.choice(songs)
 
 
